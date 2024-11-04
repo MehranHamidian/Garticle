@@ -1,4 +1,7 @@
 <?php
+    $pdo = require_once __DIR__. "/../connection.php";
+?>
+<?php
     //first of all validate token
     $token = htmlspecialchars( filter_input(INPUT_POST, "RegisterToken"));
     if(!$token || $token !== $_SESSION["token"]){
@@ -53,7 +56,7 @@
             $errors["LastName"] = "minimum charcter for last name is 2";
         }elseif(preg_match('/[^a-zA-Z]/', $LastName)){
             $errors["LastName"] = "First name field should contain only alphabetic characters.";
-        }elseif(strlen($LastName > 64)){
+        }elseif(strlen($LastName)> 64){
             $errors["LastName"] = "maximum character for last name is 64";
         }
     }
@@ -68,5 +71,24 @@
             $errors["email"] = "invalide email";
         }
     }
+
+    //if count of errors == 0
+    //store user information on database
+
+    if(count($errors) === 0){
+        //generate SQL command
+        $sql = "INSERT INTO user (username, firstname, lastname, email) VALUES (:username, :firstname, :lastname, :email)";
+        $statement = $pdo->prepare($sql);
+        
+        //binde value to sql command
+        $statement->bindValue(":username", $inputs["username"]);
+        $statement->bindValue(":firstname", $inputs["FirstName"]);
+        $statement->bindValue("lastname", $inputs["LastName"]);
+        $statement->bindValue("email", $inputs["email"]);
+        
+        //execute sql commnad
+        $statement->execute();
+    }
+    
 
 ?>
