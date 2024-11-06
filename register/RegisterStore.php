@@ -1,7 +1,9 @@
 <?php
     $pdo = require_once __DIR__. "/../connection.php";
+    require_once __DIR__. "/../inc/functions/DB/ExistInDB.php";
 ?>
 <?php
+
     //first of all validate token
     $token = htmlspecialchars( filter_input(INPUT_POST, "RegisterToken"));
     if(!$token || $token !== $_SESSION["token"]){
@@ -28,6 +30,10 @@
         }elseif(strlen($username) > 64){//and also morethan 64
             $errors["username"] = "maximum character for username is 64";
         }
+    }
+    //check for if username already exist?
+    if(Exist("user", "username", $inputs["username"])){
+        $errors["username"] = "the username already exist!";
     }
 
     //validate first name 
@@ -70,6 +76,10 @@
         if(!filter_var($email, FILTER_VALIDATE_EMAIL)){ //validate email by FILTER_VALIDATE_EMAIL
             $errors["email"] = "invalide email";
         }
+    }
+    //check for if email exist in database or not
+    if(Exist("user", "email", $inputs["email"], true)){
+        $errors["email"] = "the email is already exist";
     }
 
     //if count of errors == 0
