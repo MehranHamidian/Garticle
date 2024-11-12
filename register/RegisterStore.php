@@ -12,17 +12,17 @@
     }
 
     //validate username
-    //get username from register form 
+    //get username from register form
     $username = strtolower(trim(htmlspecialchars(filter_input(INPUT_POST, "username"))));
     $inputs["username"] = $username;
     //check for if user name empty. if the username field be empty, send an error message to the user.
-    //In the 'register.php' page, we check if the count of errors is greater than 0; if so, we include the form page.
+    //In the 'register.php' page, we check if the count of errors is greater than 0. if so, we include the form page.
     //check "register.php" for this.
     if(empty($username)){
         $errors["username"] = "username is required";
     }else{
         //useranme should only contain alphabetic character and "_", we check it by preg_match() functoin.
-        //We regenerate the registration form for the user if any error occurs. 
+        //We regenerate the registration form for the user if any error occurs.
         if(preg_match('/[^a-z_]/', $username)){
             $errors['username'] = "user name should only contain alphabetic character and '_'";
         }elseif(strlen($username) < 3 ){//this for check length of username if less than 3, we have an error
@@ -36,7 +36,7 @@
         $errors["username"] = "the username already exist!";
     }
 
-    //validate first name 
+    //validate first name
     $FirstName = trim(htmlspecialchars(filter_input(INPUT_POST,"FirstName")));
     $inputs["FirstName"] = $FirstName;
     //Now, check if it is empty??
@@ -82,23 +82,33 @@
         $errors["email"] = "the email is already exist";
     }
 
+    //validate password
+    //first of all get the password
+    $password = htmlspecialchars(filter_input(INPUT_POST, "password"));
+    $inputs["password"] = $password;
+    $pattern = '/^(?=.*[a-zA-Z])(?=.*\d).{8,}$/';
+    if(!preg_match($pattern, $password)){
+        $errors["password"] = "Invalide Password!!";
+    }
+
     //if count of errors == 0
     //store user information on database
 
     if(count($errors) === 0){
         //generate SQL command
-        $sql = "INSERT INTO user (username, firstname, lastname, email) VALUES (:username, :firstname, :lastname, :email)";
+        $sql = "INSERT INTO user (username, firstname, lastname, email, password)
+         VALUES (:username, :firstname, :lastname, :email, :password)";
         $statement = $pdo->prepare($sql);
-        
+
         //binde value to sql command
         $statement->bindValue(":username", $inputs["username"]);
         $statement->bindValue(":firstname", $inputs["FirstName"]);
         $statement->bindValue("lastname", $inputs["LastName"]);
         $statement->bindValue("email", $inputs["email"]);
-        
+        $statement->bindVAlue("password", $inputs["password"]);
+
         //execute sql commnad
         $statement->execute();
     }
-    
 
 ?>
