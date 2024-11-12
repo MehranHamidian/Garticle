@@ -85,8 +85,9 @@
     //validate password
     //first of all get the password
     $password = htmlspecialchars(filter_input(INPUT_POST, "password"));
-    $inputs["password"] = $password;
-    $pattern = '/^(?=.*[a-zA-Z])(?=.*\d).{8,}$/';
+    //hash the password
+    $inputs["password"] = password_hash($password, PASSWORD_DEFAULT); 
+    $pattern = '/^(?=.*[a-zA-Z])(?=.*\d).{8,64}$/';
     if(!preg_match($pattern, $password)){
         $errors["password"] = "Invalide Password!!";
     }

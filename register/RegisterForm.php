@@ -30,7 +30,7 @@
         </div>
         <?php if(isset($errors["password"])) :?>
             <ul>
-                <li style="color:red; font-style:italic">the password should be at least 8 characters</li>
+                <li style="color:red; font-style:italic">the password should between 8-64 characters</li>
                 <li style="color:red; font-style:italic">The password should contain at least one digit</li>
                 <li style="color:red; font-style:italic">The password should contain at least one letter</li>
             </ul>
