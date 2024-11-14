@@ -17,7 +17,7 @@
     //get username from register form
     $username = strtolower(trim(htmlspecialchars(filter_input(INPUT_POST, "username"))));
     $inputs["username"] = $username;
-    
+
     //validate user name by validate_usernmae function
     if(validate_username($username) !== true){
         $errors["username"] = validate_username($username);
@@ -46,13 +46,13 @@
     //validate email
     $email = htmlspecialchars(filter_input(INPUT_POST, "email")); //get email
     $inputs["email"] = $email;
-    if(empty($email)){ //check if email empty
-        $errors["email"] = "email field is required";
-    }else{
-        if(!filter_var($email, FILTER_VALIDATE_EMAIL)){ //validate email by FILTER_VALIDATE_EMAIL
-            $errors["email"] = "invalide email";
-        }
+    $inputs["email"] = preg_replace('/^www./', "", $inputs["email"]); //remove "www." if user insert it
+
+    //validate email by FILTER_VALIDATE_EMAIL
+    if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+        $errors["email"] = "invalide email";
     }
+
     //check for if email exist in database or not
     if(Exist("user", "email", $inputs["email"], true)){
         $errors["email"] = "the email is already exist";
@@ -62,7 +62,7 @@
     //first of all get the password
     $password = htmlspecialchars(filter_input(INPUT_POST, "password"));
     //hash the password
-    $inputs["password"] = password_hash($password, PASSWORD_DEFAULT); 
+    $inputs["password"] = password_hash($password, PASSWORD_DEFAULT);
     $pattern = '/^(?=.*[a-zA-Z])(?=.*\d).{8,64}$/';
     if(!preg_match($pattern, $password)){
         $errors["password"] = "Invalide Password!!";
