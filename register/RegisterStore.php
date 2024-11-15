@@ -85,7 +85,18 @@
         $statement->bindVAlue("password", $inputs["password"]);
 
         //execute sql commnad
-        $statement->execute();
+        $statement -> execute();
+
+        //start session
+        session_start();
+        //regererate session
+        session_regenerate_id();
+        //set values in session
+        $_SESSION["auth"] = true;
+        $_SESSION["username"] = $inputs["username"];
+        //redirect user to dash page
+        header("Location:/dashboard.php", true, 301);
+        exit;
     }
 
 ?>
